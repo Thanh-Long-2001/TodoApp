@@ -1,11 +1,14 @@
 import { faAngleDown, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useNavigate } from "react-router-dom";
 import { useTodoStore } from "../../store/todoStore";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { labels, priors } from "../../store/todoStore";
 import Slider from "@mui/material/Slider";
 import Box from "@mui/material/Box";
+import { Link } from "react-router-dom";
+import Alert from "@mui/material/Alert";
+import Collapse from "@mui/material/Collapse";
+import { useNavigate, useLocation } from "react-router-dom";
 
 export const AddTodo = () => {
   const {
@@ -18,28 +21,88 @@ export const AddTodo = () => {
     addTodoJob,
     resetTodoState,
     status,
-    todoAllJob,
+    updateTodoStatus,
   } = useTodoStore();
-  console.log(todoAllJob);
+  const [alert, setAlert] = useState({ type: "", message: "", visible: false });
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+  const editItem = location.state;
+
+  useEffect(() => {
+    if (editItem) {
+      setTodoText(editItem.todoText);
+      setSelectedLabel(editItem.label);
+      setPriority(editItem.priority);
+    } else {
+      resetTodoState();
+    }
+  }, [editItem]);
+
+  const showAlert = (type, message) => {
+    setAlert({ type, message, visible: true });
+    setTimeout(() => setAlert({ ...alert, visible: false }), 3000);
+  };
 
   const handleSubmit = (e) => {
     console.log(todoText, selectedLabel, priority, status);
 
-    if (todoText.trim() === "") return;
-    addTodoJob();
+    if (todoText.trim() === "") {
+      showAlert("error", "Todo Name cannot be empty");
+      return;
+    }
+
+    if (selectedLabel.trim() === "") {
+      showAlert("error", "Label cannot be empty");
+      return;
+    }
+
+    if (editItem) {
+      updateTodoStatus(editItem.id, {
+        todoText: todoText,
+        label: selectedLabel,
+        priority: priority,
+      });
+    } else {
+      addTodoJob();
+    }
+    setIsSubmitting(true);
+
+    showAlert(
+      "success",
+      `${editItem ? "Edit successfully" : "Create successfully"}`
+    );
+    setTimeout(() => {
+      navigate("/");
+    }, 3000);
     resetTodoState();
   };
 
   return (
     <div className="px-7.5 pt-7.5 min-h-screen flex flex-col justify-between">
+      {alert.visible && (
+        <div className="fixed top-5 left-1/2 transform -translate-x-1/2 z-50 w-[90%] max-w-md">
+          <Collapse in={alert.visible}>
+            <Alert
+              severity={alert.type}
+              onClose={() => setAlert({ ...alert, visible: false })}
+            >
+              {alert.message}
+            </Alert>
+          </Collapse>
+        </div>
+      )}
       <div>
         <div className="flex justify-between">
-          <h1 className="mt-4.5 text-5xl">Add Todo</h1>
+          <h1 className="mt-4.5 text-5xl">
+            {editItem ? "Edit Todo" : "Add Todo"}
+          </h1>
           <div className="flex items-start">
-            <button className="text-2xl mt-0" onClick={() => navigate("/")}>
-              <FontAwesomeIcon icon={faXmark} />
-            </button>
+            <Link to="/">
+              <button className="text-2xl mt-0">
+                <FontAwesomeIcon icon={faXmark} />
+              </button>
+            </Link>
           </div>
         </div>
         <form className="w-full mt-10 flex flex-col gap-6 ">
@@ -117,10 +180,13 @@ export const AddTodo = () => {
       <div className="w-full mb-7.5">
         <button
           type="submit"
-          className="bg-[#1692ff] text-white w-full py-4 rounded-lg shadow-md hover:bg-[#127fd1]"
+          disabled={isSubmitting}
+          className={`bg-[#1692ff] text-white w-full py-4 rounded-lg shadow-md hover:bg-[#127fd1] ${
+            isSubmitting ? "opacity-50 cursor-not-allowed" : ""
+          }`}
           onClick={() => handleSubmit()}
         >
-          Done
+          {editItem ? "Edit" : "Done"}
         </button>
       </div>
     </div>

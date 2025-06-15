@@ -24,6 +24,14 @@ function App() {
               </>
             }
           />
+          <Route
+            path="/edit-todo"
+            element={
+              <>
+                <AddTodo />
+              </>
+            }
+          />
         </Routes>
       </div>
     </div>
