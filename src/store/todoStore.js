@@ -1,5 +1,7 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
+import dayjs from "dayjs";
+
 export const todoStatus = {
   Done: "done",
   Todo: "todo",
@@ -12,6 +14,8 @@ export const priors = [
   { label: "Medium", value: 1 },
   { label: "High", value: 2 },
 ];
+
+export const listAssignee = ["Nguyen Van A", "Nguyen Van B", "Nguyen Van C"];
 export const useTodoStore = create(
   persist(
     (set) => ({
@@ -19,28 +23,43 @@ export const useTodoStore = create(
       selectedLabel: "",
       priority: priors[0].value,
       status: todoStatus.Todo,
+      formatDeadlineToDay: dayjs().add(2, "hour"),
+      deadline: "",
+      assignee: "",
       todoAllJob: [],
 
       setSelectedLabel: (label) => set({ selectedLabel: label }),
       setPriority: (prior) => set({ priority: prior }),
       setTodoText: (todo) => set({ todoText: todo }),
+      setDeadline: (date) => set({ deadline: date }),
+      setAssignee: (name) => set({ assignee: name }),
+      setFormatDeadline: (date) => set({ formatDeadlineToDay: date }),
       removeTodoJob: (id) =>
         set((state) => ({
           todoAllJob: state.todoAllJob.filter((job) => job.id !== id),
         })),
       addTodoJob: () =>
-        set((state) => ({
-          todoAllJob: [
-            ...state.todoAllJob,
-            {
-              id: Date.now(),
-              todoText: state.todoText,
-              label: state.selectedLabel,
-              priority: state.priority,
-              status: state.status,
-            },
-          ],
-        })),
+        set((state) => {
+          let deadline;
+          if (!state.deadline) {
+            deadline = state.formatDeadlineToDay.toISOString();
+          }
+          return {
+            todoAllJob: [
+              ...state.todoAllJob,
+              {
+                id: Date.now(),
+                todoText: state.todoText,
+                label: state.selectedLabel,
+                priority: state.priority,
+                status: state.status,
+                deadline: state.deadline || deadline,
+                formatDeadlineToDay: state.formatDeadlineToDay,
+                assignee: state.assignee,
+              },
+            ],
+          };
+        }),
       updateTodoStatus: (id, newUpdate) => {
         console.log(newUpdate);
         set((state) => ({
@@ -55,6 +74,9 @@ export const useTodoStore = create(
           todoText: "",
           selectedLabel: "",
           priority: priors[0].value,
+          deadline: "",
+          formatDeadlineToDay: dayjs().add(2, "hour"),
+          assignee: "",
         }),
     }),
     {

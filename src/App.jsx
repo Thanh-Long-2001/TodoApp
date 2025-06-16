@@ -8,30 +8,9 @@ function App() {
     <div className="max-w-[640px] w-full mx-auto">
       <div className="w-full ">
         <Routes>
-          <Route
-            path="/"
-            element={
-              <>
-                <Homepage />
-              </>
-            }
-          />
-          <Route
-            path="/add-todos"
-            element={
-              <>
-                <AddTodo />
-              </>
-            }
-          />
-          <Route
-            path="/edit-todo"
-            element={
-              <>
-                <AddTodo />
-              </>
-            }
-          />
+          <Route path="/" element={<Homepage />} />
+          <Route path="/add-todos" element={<AddTodo />} />
+          <Route path="/edit-todo" element={<AddTodo />} />
         </Routes>
       </div>
     </div>

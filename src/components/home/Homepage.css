@@ -1,0 +1,36 @@
+.custom-scroll {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+.custom-scroll::-webkit-scrollbar {
+  display: none; /* Chrome, Safari and Opera */
+}
+
+@keyframes colorBlinkText {
+  0%,
+  100% {
+    color: green;
+  }
+  50% {
+    color: red;
+  }
+}
+
+.text-blink {
+  animation: colorBlinkText 1s infinite;
+}
+
+@keyframes colorBlinkBorder {
+  0%,
+  100% {
+    border-color: yellow;
+  }
+  50% {
+    border-color: red;
+  }
+}
+
+.border-blink {
+  animation: colorBlinkBorder 1s infinite;
+}
