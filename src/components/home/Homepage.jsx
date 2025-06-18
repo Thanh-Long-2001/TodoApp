@@ -52,8 +52,6 @@ export const Homepage = () => {
     ?.filter((item) => item.status === todoStatus.Todo)
     .sort((a, b) => b.id - a.id);
 
-  // console.log(allJobTodo);
-
   const allJobDone = todoAllJob
     ?.filter((item) => item.status === todoStatus.Done)
     .sort((a, b) => b.id - a.id);
@@ -74,7 +72,7 @@ export const Homepage = () => {
           </Collapse>
         </div>
       )}
-      <div className="sticky w-full h-23 top-7.5 left-7.5 flex justify-center">
+      <div className="sticky w-full h-[10%] top-0 flex justify-center items-center">
         <h1 className="text-4xl italic text-blink text-nowrap">
           BEST TODO APP
         </h1>
@@ -95,10 +93,10 @@ export const Homepage = () => {
         <div className="">
           {allJobTodo.length > 0 && (
             <div className=" w-full flex flex-col">
-              <div className=" gap-2 flex flex-col">
+              <div className=" gap-5 flex flex-col">
                 {allJobTodo.map((item) => (
                   <div
-                    className={`grid grid-cols-8 bg-white w-full py-4 rounded-[10px] shadow-lg ${checkDeadline(
+                    className={`grid grid-cols-8 bg-white w-full py-4 rounded-[10px] ${checkDeadline(
                       item.deadline
                     )}`}
                   >
@@ -112,7 +110,11 @@ export const Homepage = () => {
                     </div>
                     <Link
                       to="edit-todo"
-                      state={item}
+                      state={{
+                        ...item,
+                        deadline:
+                          item.deadline || dayjs().add(2, "hour").toISOString(),
+                      }}
                       className="col-span-6 flex flex-col gap-5"
                     >
                       <div className="flex flex-col gap-2 font-normal">
@@ -132,23 +134,23 @@ export const Homepage = () => {
                           <span>{getLabelPrior(item.priority)}</span>
                         </div>
                         <div
-                          className={` w-fit ${setBgPrior(
-                            getLabelPrior(item.priority)
-                          )} bg-transparent`}
+                          className={` w-fit max-md:text-xs text-nowrap bg-transparent`}
                         >
                           {item.assignee}
                         </div>
                         <div
-                          className={`${setBgPrior(
-                            getLabelPrior(item.priority)
-                          )} bg-transparent`}
+                          className={`max-md:text-xs text-nowrap bg-transparent`}
                         >
                           <span>
-                            {dayjs(item.deadline).format("DD/MM/YYYY")}
+                            {item.deadline
+                              ? dayjs(item.deadline).format("DD/MM/YYYY")
+                              : "-- |"}
                           </span>
-                          <span>{` - ${dayjs(item.deadline).format(
-                            "HH:mm"
-                          )}`}</span>
+                          <span>{` -${item.deadline ? "" : "-"} ${
+                            item.deadline
+                              ? dayjs(item.deadline).format("HH:mm")
+                              : ""
+                          }`}</span>
                         </div>
                       </div>
                     </Link>
@@ -174,11 +176,11 @@ export const Homepage = () => {
               <div
                 className={`${
                   allJobTodo.length === 0 ? "mt-7.5" : ""
-                } gap-2 flex flex-col`}
+                } gap-5 flex flex-col`}
               >
                 {allJobDone.map((item) => (
                   <div className="relative">
-                    <div className="absolute inset-0 z-1 bg-white opacity-70 cursor-not-allowed rounded-[10px] shadow-lg"></div>
+                    <div className="absolute inset-0 z-1 bg-white opacity-70 cursor-not-allowed rounded-[10px]"></div>
                     <div className="grid grid-cols-8 bg-white w-full py-4 rounded-[10px]">
                       <div className="col-span-1 flex justify-center">
                         <div className="w-5 h-5 rounded-full border-1 flex justify-center items-center mt-0.5">
@@ -203,9 +205,7 @@ export const Homepage = () => {
                             <span>{getLabelPrior(item.priority)}</span>
                           </div>
                           <div
-                            className={`${setBgPrior(
-                              getLabelPrior(item.priority)
-                            )} bg-transparent`}
+                            className={`max-md:text-xs text-nowrap bg-transparent`}
                           >
                             <span
                               className="${setBgPrior(
@@ -215,17 +215,17 @@ export const Homepage = () => {
                               {item.assignee}
                             </span>
                           </div>
-                          <div
-                            className={` ${setBgPrior(
-                              getLabelPrior(item.priority)
-                            )} bg-transparent`}
-                          >
+                          <div className={` max-md:text-xs text-nowrap`}>
                             <span className="">
-                              {dayjs(item.deadline).format("DD/MM/YYYY")}
+                              {item.deadline
+                                ? dayjs(item.deadline).format("DD/MM/YYYY")
+                                : "-- |"}
                             </span>
-                            <span>{` - ${dayjs(item.deadline).format(
-                              "HH:mm"
-                            )}`}</span>
+                            <span>{` -${item.deadline ? "" : "-"} ${
+                              item.deadline
+                                ? dayjs(item.deadline).format("HH:mm")
+                                : ""
+                            }`}</span>
                           </div>
                         </div>
                       </div>

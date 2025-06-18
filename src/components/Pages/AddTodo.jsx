@@ -27,7 +27,7 @@ const getValidDay = (deadline) => {
   }
 };
 export const AddTodo = () => {
-  const {
+  let {
     todoText,
     setTodoText,
     selectedLabel,
@@ -65,6 +65,10 @@ export const AddTodo = () => {
       resetTodoState();
     }
   }, [editItem || null]);
+
+  if (!formatDeadlineToDay) {
+    formatDeadlineToDay = dayjs().add(2, "hour");
+  }
 
   // check valid day
   const checkValidDay = (deadline) => {

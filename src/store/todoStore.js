@@ -23,7 +23,7 @@ export const useTodoStore = create(
       selectedLabel: "",
       priority: priors[0].value,
       status: todoStatus.Todo,
-      formatDeadlineToDay: dayjs().add(2, "hour"),
+      formatDeadlineToDay: "",
       deadline: "",
       assignee: "",
       todoAllJob: [],
